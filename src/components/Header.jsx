@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Dummy flag icon (replace with actual image or SVG as needed)
 const FlagIcon = () => (
@@ -13,6 +13,19 @@ const FlagIcon = () => (
 
 const Header = ({ colors }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
+
+  // Prevent body scroll when menu is open (mobile)
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
   const toggleMenu = () => setMenuOpen(open => !open);
 
   return (
@@ -136,7 +149,7 @@ const Header = ({ colors }) => {
       {/* Mobile Navigation Overlay */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col"
+          className="fixed inset-0 z-40 flex flex-col overflow-y-auto"
           style={{
             backgroundColor: 'rgba(0, 18, 20, 0.96)',
             minHeight: '100vh',
@@ -146,16 +159,16 @@ const Header = ({ colors }) => {
           }}
         >
           {/* Top bar: logo left, controls right, close button absolute */}
-          <div className="relative flex justify-between items-center px-8 pt-8 pb-4">
+          <div className="relative flex justify-between items-center px-4 pt-6 pb-4 md:px-8 md:pt-8">
             {/* Logo */}
             <div>
-              <span className="font-extrabold text-2xl leading-tight text-white">
+              <span className="font-extrabold text-xl md:text-2xl leading-tight text-white">
                 FRANS HALS MUSEUM<br />
                 <span className="font-normal text-base">HAARLEM</span>
               </span>
             </div>
             {/* Controls */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               {/* Search Icon */}
               <button className="text-white hover:text-gray-300 focus:outline-none">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -163,7 +176,7 @@ const Header = ({ colors }) => {
                 </svg>
               </button>
               {/* Language Switcher */}
-              <div className="flex items-center border rounded-full px-3 py-1 bg-transparent text-white font-bold text-sm border-white">
+              <div className="hidden sm:flex items-center border rounded-full px-3 py-1 bg-transparent text-white font-bold text-sm border-white">
                 <span className="mr-2">NL</span>
                 <span style={{
                   background: '#fff',
@@ -174,7 +187,7 @@ const Header = ({ colors }) => {
                 }}>EN</span>
               </div>
               {/* Order Tickets Button */}
-              <button className="px-6 py-2 rounded-full font-bold text-sm transition duration-300"
+              <button className="px-4 py-2 rounded-full font-bold text-sm transition duration-300"
                 style={{
                   backgroundColor: colors?.buttonBeige || '#e6c98b',
                   color: colors?.darkBackground || '#181818'
@@ -185,7 +198,7 @@ const Header = ({ colors }) => {
             {/* Close Button */}
             <button
               onClick={toggleMenu}
-              className="absolute top-0 right-0 mt-6 mr-8 text-white focus:outline-none"
+              className="absolute top-0 right-0 mt-4 mr-4 md:mt-6 md:mr-8 text-white focus:outline-none"
               style={{ zIndex: 50 }}
               aria-label="Close menu"
             >
@@ -194,35 +207,33 @@ const Header = ({ colors }) => {
               </svg>
             </button>
           </div>
-          {/* Main content: navigation center, directly to box right */}
-          <div className="flex flex-1 items-center justify-center px-8">
-            <div className="flex flex-row w-full justify-center items-center space-x-16">
-              {/* Main navigation */}
-              <nav className="flex flex-col space-y-6 text-4xl font-extrabold text-white items-center">
-                <a href="#" className="hover:text-gray-300 transition duration-300">VISIT</a>
-                <a href="#" className="hover:text-gray-300 transition duration-300">SEE & DO</a>
-                <a href="#" className="hover:text-gray-300 transition duration-300">COLLECTION</a>
-                <a href="#" className="hover:text-gray-300 transition duration-300">ABOUT US</a>
-              </nav>
-              {/* DIRECTLY TO box */}
-              <div className="rounded-xl p-6 border" style={{
+          {/* Main content: responsive layout */}
+          <div className="flex flex-1 flex-col md:flex-row items-center justify-center px-4 md:px-8">
+            {/* Main navigation */}
+            <nav className="flex flex-col space-y-6 text-3xl md:text-4xl font-extrabold text-white items-center w-full max-w-xs md:max-w-none md:w-auto">
+              <a href="#" className="hover:text-gray-300 transition duration-300">VISIT</a>
+              <a href="#" className="hover:text-gray-300 transition duration-300">SEE & DO</a>
+              <a href="#" className="hover:text-gray-300 transition duration-300">COLLECTION</a>
+              <a href="#" className="hover:text-gray-300 transition duration-300">ABOUT US</a>
+            </nav>
+            {/* DIRECTLY TO box */}
+            <div className="mt-8 md:mt-0 md:ml-16 rounded-xl p-6 border w-full max-w-xs md:max-w-sm"
+              style={{
                 borderColor: colors?.buttonBeige || '#e6c98b',
-                background: 'rgba(0,0,0,0.7)',
-                minWidth: '260px'
+                background: 'rgba(0,0,0,0.7)'
               }}>
-                <h3 className="text-lg font-semibold mb-4 text-white">DIRECTLY TO</h3>
-                <ul className="space-y-2 text-lg text-white">
-                  <li><a href="#" className="hover:text-gray-300 transition duration-300">Families & children</a></li>
-                  <li><a href="#" className="hover:text-gray-300 transition duration-300">Education</a></li>
-                  <li><a href="#" className="hover:text-gray-300 transition duration-300">Groups</a></li>
-                  <li><a href="#" className="hover:text-gray-300 transition duration-300">A day in Haarlem</a></li>
-                  <li><a href="#" className="hover:text-gray-300 transition duration-300" style={{ color: colors?.buttonBeige || '#e6c98b' }}>Support us</a></li>
-                </ul>
-              </div>
+              <h3 className="text-lg font-semibold mb-4 text-white">DIRECTLY TO</h3>
+              <ul className="space-y-2 text-lg text-white">
+                <li><a href="#" className="hover:text-gray-300 transition duration-300">Families & children</a></li>
+                <li><a href="#" className="hover:text-gray-300 transition duration-300">Education</a></li>
+                <li><a href="#" className="hover:text-gray-300 transition duration-300">Groups</a></li>
+                <li><a href="#" className="hover:text-gray-300 transition duration-300">A day in Haarlem</a></li>
+                <li><a href="#" className="hover:text-gray-300 transition duration-300" style={{ color: colors?.buttonBeige || '#e6c98b' }}>Support us</a></li>
+              </ul>
             </div>
           </div>
           {/* Footer info */}
-          <div className="px-8 pb-8 text-white text-base font-bold">
+          <div className="px-4 md:px-8 pb-8 text-white text-base font-bold">
             <h3 className="text-xl font-semibold mb-2">FRANS HALS MUSEUM</h3>
             <p className="font-normal">Groot Heiligland 62, Haarlem</p>
             <h3 className="text-xl font-semibold mt-4 mb-2">LOCATION HAL</h3>
