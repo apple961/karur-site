@@ -21,11 +21,14 @@ const HeroSection = ({ buttonText, colors }) => {
     <section
       className="relative bg-cover bg-center flex items-end pb-12"
       style={{
+        width: '100%',
         height: '620px',
         borderBottomLeftRadius: '40px',
         borderBottomRightRadius: '40px',
         backgroundImage: `url("${dummyImages[activeDot]}")`,
         backgroundColor: colors.lightBeige,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         overflow: 'hidden'
       }}
     >
@@ -52,5 +55,6 @@ const HeroSection = ({ buttonText, colors }) => {
     </section>
   );
 };
+
 
 export default HeroSection;
