@@ -61,7 +61,8 @@ const Header = ({ colors }) => {
             letterSpacing: '-2px',
             textShadow: '0 2px 8px rgba(0,0,0,0.18)'
           }}>
-            KARUR<br />
+            Karur<br />
+            {/* <span className="font-normal text-base">HAARLEM</span> */}
           </a>
         </div>
 
@@ -149,17 +150,18 @@ const Header = ({ colors }) => {
       {/* Mobile Navigation Overlay */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col overflow-y-auto"
+          className="fixed inset-0 z-40 flex flex-col px-4 md:px-8 py-6 md:py-8" // Re-added responsive padding to the main overlay
           style={{
             backgroundColor: 'rgba(0, 18, 20, 0.96)',
             minHeight: '100vh',
-            width: '100vw',
+            width: '80vw',
             left: 0,
-            top: 0
+            top: 0,
+            overflowY: 'auto',
           }}
         >
-          {/* Top bar: logo left, controls right, close button absolute */}
-          <div className="relative flex justify-between items-center px-4 pt-6 pb-4 md:px-8 md:pt-8">
+          {/* Top bar: logo left, controls right, close button */}
+          <div className="flex justify-between items-center w-full mb-12">
             {/* Logo */}
             <div>
               <span className="font-extrabold text-xl md:text-2xl leading-tight text-white">
@@ -175,17 +177,6 @@ const Header = ({ colors }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              {/* Language Switcher */}
-              <div className="hidden sm:flex items-center border rounded-full px-3 py-1 bg-transparent text-white font-bold text-sm border-white">
-                <span className="mr-2">NL</span>
-                <span style={{
-                  background: '#fff',
-                  color: '#181818',
-                  borderRadius: '4px',
-                  padding: '2px 8px',
-                  fontWeight: 'bold'
-                }}>EN</span>
-              </div>
               {/* Order Tickets Button */}
               <button className="px-4 py-2 rounded-full font-bold text-sm transition duration-300"
                 style={{
@@ -194,23 +185,24 @@ const Header = ({ colors }) => {
                 }}>
                 ORDER TICKETS
               </button>
+              {/* Close Button - Positioned within the flex container */}
+              <button
+                onClick={toggleMenu}
+                className="text-white focus:outline-none ml-2" // Added ml-2 for spacing
+                style={{ zIndex: 50 }}
+                aria-label="Close menu"
+              >
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            {/* Close Button */}
-            <button
-              onClick={toggleMenu}
-              className="absolute top-0 right-0 mt-4 mr-4 md:mt-6 md:mr-8 text-white focus:outline-none"
-              style={{ zIndex: 50 }}
-              aria-label="Close menu"
-            >
-              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
           </div>
           {/* Main content: responsive layout */}
-          <div className="flex flex-1 flex-col md:flex-row items-center justify-center px-4 md:px-8">
+          {/* Adjusted padding and alignment to move content to the left */}
+          <div className="flex flex-1 flex-col md:flex-row items-start justify-start pl-0 md:pl-16 pt-8 md:pt-0"> {/* Removed pl-4, relying on parent px-4 */}
             {/* Main navigation */}
-            <nav className="flex flex-col space-y-6 text-3xl md:text-4xl font-extrabold text-white items-center w-full max-w-xs md:max-w-none md:w-auto">
+            <nav className="flex flex-col space-y-6 text-3xl md:text-4xl font-extrabold text-white items-start w-full max-w-xs md:max-w-none md:w-auto">
               <a href="#" className="hover:text-gray-300 transition duration-300">VISIT</a>
               <a href="#" className="hover:text-gray-300 transition duration-300">SEE & DO</a>
               <a href="#" className="hover:text-gray-300 transition duration-300">COLLECTION</a>
@@ -233,7 +225,7 @@ const Header = ({ colors }) => {
             </div>
           </div>
           {/* Footer info */}
-          <div className="px-4 md:px-8 pb-8 text-white text-base font-bold">
+          <div className="pl-4 md:pl-16 pb-8 text-white text-base font-bold mt-auto"> {/* Adjusted padding-left */}
             <h3 className="text-xl font-semibold mb-2">FRANS HALS MUSEUM</h3>
             <p className="font-normal">Groot Heiligland 62, Haarlem</p>
             <h3 className="text-xl font-semibold mt-4 mb-2">LOCATION HAL</h3>
@@ -244,7 +236,5 @@ const Header = ({ colors }) => {
     </header>
   );
 };
-
-
 
 export default Header;
