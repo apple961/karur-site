@@ -2,12 +2,13 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "./ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-import { MapPin, Menu, Clock, Sun, Cloud, CloudSun, Snowflake, Loader2, Droplets, Wind, Languages, Home, History, MapPinned, Briefcase, GraduationCap, Image, Mail, Sparkles, Circle, Newspaper, TrendingUp, Calendar, Radio, Video, Play } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
+import { MapPin, Menu, Clock, Sun, Cloud, CloudSun, Snowflake, Loader2, Droplets, Wind, Languages, Home, History, MapPinned, Briefcase, GraduationCap, Image, Mail, Sparkles, Circle, Newspaper, TrendingUp, Calendar, Radio, Video, Play, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import { useWeather } from "./hooks/useWeather";
 import { useLanguage } from "./context/LanguageContext";
-import { useKarurNews, getTimeAgo } from "./hooks/useKarurNews";
+import { useKarurNews, getTimeAgo, VideoItem } from "./hooks/useKarurNews";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,6 +16,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [islandExpanded, setIslandExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'news' | 'videos'>('news');
+  const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const islandRef = useRef<HTMLDivElement>(null);
   const { weather, loading: weatherLoading, error: weatherError } = useWeather('Karur');
   const { language, setLanguage, t } = useLanguage();
@@ -635,7 +638,7 @@ export function Header() {
                             <div className="flex flex-col items-center gap-2 text-center">
                               <Newspaper className="h-6 w-6 text-white/40" />
                               <span className="text-[10px] text-white/60">
-                                {language === 'en' ? 'No recent news available' : 'சமீபத்திய செய்திகள் இல்லை'}
+                                {language === 'en' ? 'No news from today yet' : 'இன்று செய்திகள் இல்லை'}
                               </span>
                             </div>
                           </div>
@@ -720,11 +723,12 @@ export function Header() {
                           <>
                             <div className="flex gap-3 overflow-x-auto scrollbar-hide px-1 pb-2 snap-x snap-mandatory">
                               {videos.map((video, index) => (
-                                <motion.a
+                                <motion.div
                                   key={index}
-                                  href={video.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  onClick={() => {
+                                    setSelectedVideo(video);
+                                    setVideoDialogOpen(true);
+                                  }}
                                   className="group flex-shrink-0 w-[260px] rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 cursor-pointer snap-start overflow-hidden"
                                   initial={{ opacity: 0, x: -20 }}
                                   animate={{ opacity: 1, x: 0 }}
@@ -767,7 +771,7 @@ export function Header() {
                                       </span>
                                     </div>
                                   </div>
-                                </motion.a>
+                                </motion.div>
                               ))}
                             </div>
                             
@@ -795,8 +799,8 @@ export function Header() {
                           }`} />
                           <span className="text-white/50">
                             {language === 'en' 
-                              ? (activeTab === 'news' ? 'Live • Latest News' : 'Live • Video Updates')
-                              : (activeTab === 'news' ? 'நேரடி • சமீபத்திய செய்திகள்' : 'நேரடி • காணொளி புதுப்பிப்புகள்')
+                              ? (activeTab === 'news' ? 'Live • Today\'s News' : 'Live • Video Updates')
+                              : (activeTab === 'news' ? 'நேரடி • இன்றைய செய்திகள்' : 'நேரடி • காணொளி புதுப்பிப்புகள்')
                             }
                           </span>
                         </div>
@@ -812,6 +816,59 @@ export function Header() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Video Player Dialog */}
+      <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
+        <DialogContent className="max-w-4xl p-0 bg-black/95 border-white/20">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Video Player</DialogTitle>
+            <DialogDescription>
+              Watch the video from {selectedVideo?.channel}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedVideo && (
+            <div className="relative">
+              {/* Close button */}
+              <button
+                onClick={() => setVideoDialogOpen(false)}
+                className="absolute -top-10 right-0 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-300"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+              
+              {/* Video Player */}
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1&rel=0`}
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={selectedVideo.title}
+                />
+              </div>
+              
+              {/* Video Info */}
+              <div className="p-4 bg-gradient-to-b from-black/80 to-black/60">
+                <h3 className="text-white mb-2">
+                  {selectedVideo.title}
+                </h3>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-red-400">{selectedVideo.channel}</span>
+                  <span className="text-white/60">
+                    {getTimeAgo(selectedVideo.publishedAt, language)}
+                  </span>
+                </div>
+                {selectedVideo.description && (
+                  <p className="text-white/70 text-sm mt-3">
+                    {selectedVideo.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
     </motion.header>
   );

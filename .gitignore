@@ -21,3 +21,22 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# --- Capacitor native projects (do NOT commit) ---
+/android/
+/ios/
+
+# --- Android signing + local machine config ---
+*.jks
+*.keystore
+**/key.properties
+/android/local.properties
+
+# --- (Only matters if you ever unignore /android) ---
+/android/.gradle/
+/android/.idea/
+/android/**/build/
+/android/**/.cxx/
+
+# --- Vite build output (in case your outDir is the default) ---
+/dist
